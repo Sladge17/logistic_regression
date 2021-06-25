@@ -4,7 +4,7 @@ import os
 def check_argv(argv):
 	length = len(argv)
 	if not length or length > 2:
-		print("\033[31mNeed maximum two params\033[37m")
+		print("\033[31mNeed min one, max two params\033[37m")
 		exit()
 	return length
 
@@ -26,7 +26,10 @@ def fill_dump(dump='dump', custom=0):
 				print("\033[31mDumpfile not exist\033[37m")
 				exit()
 			try:
-				os.system("python logreg_train.py datasets/dataset_train.csv")
+				try:
+					os.system("python3 logreg_train.py datasets/dataset_train.csv")
+				except:
+					os.system("python logreg_train.py datasets/dataset_train.csv")
 			except:
 				print("\033[31mNot exist file logreg_train.py\033[37m")
 				exit()

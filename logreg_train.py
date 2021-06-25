@@ -21,7 +21,7 @@ def check_argv(argv):
 
 def read_data(source):
 	try:
-		data = np.genfromtxt(source, dtype=np.unicode, delimiter=',')
+		data = np.genfromtxt(source, dtype=np.compat.unicode, delimiter=',')
 	except:
 		print("\033[31mDataset not exist\033[37m")
 		exit()
