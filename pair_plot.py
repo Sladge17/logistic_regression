@@ -1,5 +1,6 @@
 import sys
 import pandas as pd
+import matplotlib.pyplot as plt
 import seaborn as sns
 
 def check_argv(argv):
@@ -15,11 +16,11 @@ def fill_data(path):
 	return feature
 
 def draw_graph(feature):
-	sns.pairplot(feature['Arithmancy', 'Astronomy', 'Herbology', 'Hogwarts House'], hue='Hogwarts House', diag_kind='hist')
+	sns.pairplot(feature, hue='Hogwarts House', diag_kind='hist')
+	plt.show()
 
 def main(argv):
-	# path = check_argv(argv)
-	path = 'datasets/dataset_train.csv'
+	path = check_argv(argv)
 	feature = fill_data(path)
 	draw_graph(feature)
 
