@@ -44,6 +44,13 @@ def pre_analyze(feature):
 	for i in range(len(feature)):
 		feature[i] = list(filter(lambda x: x != 'NaN', feature[i]))
 
+def create_data(argv):
+	path = check_argv(argv)
+	title, feature = fill_data(path)
+	clear_data(title, feature)
+	pre_analyze(feature)
+	return title, feature
+
 def print_title(title, column_w):
 	print_title = [i.split() for i in title]
 	height = max(map(len, print_title))
@@ -99,10 +106,15 @@ def get_fraction25(feature):
 	if len(feature) == 0:
 		return 'NaN'
 	feature = sorted(feature)
-	fract = len(feature) / 4
+	fract = len(feature) / 2
 	if fract % 1:
 		fract += 1
-	fract_value = feature[int(fract) - 1]	
+	feature = feature[:int(fract)]
+	fract = len(feature) / 2
+	if fract % 1:
+		fract_value = (feature[int(fract)])
+	else:
+		fract_value = (feature[int(fract) - 1] + feature[int(fract)]) / 2
 	return fract_value
 
 def get_fraction50(feature):
@@ -111,18 +123,22 @@ def get_fraction50(feature):
 	feature = sorted(feature)
 	fract = len(feature) / 2
 	if fract % 1:
-		fract += 1
-	fract_value = feature[int(fract) - 1]	
+		fract_value = (feature[int(fract)])
+	else:
+		fract_value = (feature[int(fract) - 1] + feature[int(fract)]) / 2
 	return fract_value
 
 def get_fraction75(feature):
 	if len(feature) == 0:
 		return 'NaN'
 	feature = sorted(feature)
-	fract = 3 * len(feature) / 4
+	fract = len(feature) / 2
+	feature = feature[int(fract):]
+	fract = len(feature) / 2
 	if fract % 1:
-		fract += 1
-	fract_value = feature[int(fract) - 1]	
+		fract_value = (feature[int(fract)])
+	else:
+		fract_value = (feature[int(fract) - 1] + feature[int(fract)]) / 2
 	return fract_value
 
 def get_real25(feature):
@@ -206,10 +222,7 @@ def print_datastring(title, func, feature, column_w):
 	print()
 
 def main(argv):
-	path = check_argv(argv)
-	title, feature = fill_data(path)
-	clear_data(title, feature)
-	pre_analyze(feature)
+	title, feature = create_data(argv)
 	column_w = 16
 	print_title(title, column_w)
 	print()
