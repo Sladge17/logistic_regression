@@ -125,6 +125,69 @@ def get_fraction75(feature):
 	fract_value = feature[int(fract) - 1]	
 	return fract_value
 
+def get_real25(feature):
+	if len(feature) == 0:
+		return 'NaN'
+	min_value = get_min(feature)
+	max_value = get_max(feature)
+	real25 = min_value + (max_value - min_value) * 0.25
+	return real25
+
+def get_real50(feature):
+	if len(feature) == 0:
+		return 'NaN'
+	min_value = get_min(feature)
+	max_value = get_max(feature)
+	real50 = min_value + (max_value - min_value) * 0.5
+	return real50
+
+def get_real75(feature):
+	if len(feature) == 0:
+		return 'NaN'
+	min_value = get_min(feature)
+	max_value = get_max(feature)
+	real75 = min_value + (max_value - min_value) * 0.75
+	return real75
+
+def get_near25(feature):
+	if len(feature) == 0:
+		return 'NaN'
+	real25 = get_real25(feature)
+	near25 = feature[0]
+	div = abs(near25 - real25)
+	for i in feature[1:]:
+		if abs(i - real25) > div:
+			break
+		div = abs(i - real25)
+		near25 = i
+	return near25
+
+def get_near50(feature):
+	if len(feature) == 0:
+		return 'NaN'
+	real50 = get_real50(feature)
+	near50 = feature[0]
+	div = abs(near50 - real50)
+	for i in feature[1:]:
+		if abs(i - real50) > div:
+			break
+		div = abs(i - real50)
+		near50 = i
+	return near50
+
+def get_near75(feature):
+	if len(feature) == 0:
+		return 'NaN'
+	real75 = get_real75(feature)
+	near75 = feature[0]
+	div = abs(near75 - real75)
+	for i in feature[1:]:
+		if abs(i - real75) > div:
+			break
+		div = abs(i - real75)
+		near75 = i
+	return near75
+
 def print_datastring(title, func, feature, column_w):
 	print(title, end='\t')
 	if len(title) < 4:
@@ -158,6 +221,13 @@ def main(argv):
 	print_datastring('50%', get_fraction50, feature, column_w)
 	print_datastring('75%', get_fraction75, feature, column_w)
 	print_datastring('Max', get_max, feature, column_w)
+	print("BONUS")
+	print_datastring('Real25%', get_real25, feature, column_w)
+	print_datastring('Real50%', get_real50, feature, column_w)
+	print_datastring('Real75%', get_real75, feature, column_w)
+	print_datastring('Near25%', get_near25, feature, column_w)
+	print_datastring('Near50%', get_near50, feature, column_w)
+	print_datastring('Near75%', get_near75, feature, column_w)
 
 if __name__ == "__main__":
 	main(sys.argv)
