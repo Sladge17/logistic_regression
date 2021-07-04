@@ -9,7 +9,7 @@ def check_argv(argv):
 
 def fill_data(path):
 	title = 0
-	score ={}
+	score = {}
 	with open(path) as file:
 		for line in file:
 			if not title:
