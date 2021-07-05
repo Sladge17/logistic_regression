@@ -1,5 +1,6 @@
 import sys
-import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 
 def check_argv(argv):
 	if len(argv) != 2:
@@ -8,7 +9,13 @@ def check_argv(argv):
 	return argv[1]
 
 def fill_data(path):
-	pass
+	feature = pd.read_csv(path)
+	feature = feature.drop(['Index', 'First Name', 'Last Name',
+							'Birthday', 'Best Hand'], axis=1)
+	return feature
+
+def draw_graph(feature):
+	sns.pairplot(feature['Arithmancy', 'Astronomy', 'Herbology', 'Hogwarts House'], hue='Hogwarts House', diag_kind='hist')
 
 def main(argv):
 	# path = check_argv(argv)
