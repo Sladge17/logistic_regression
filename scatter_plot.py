@@ -9,44 +9,34 @@ def check_argv(argv):
 
 def fill_data(path):
 	title = 0
-	feature = {'Index':[], 'Astronomy':[], 'Muggle Studies':[]}
+	feature = {'Astronomy':[], 'Defense Against the Dark Arts':[]}
 	with open(path) as file:
 		for line in file:
 			if not title:
 				title = line[:-1].split(',')
 				for i, data in enumerate(title):
-					if data == 'Index':
-						index = i
 					if data == 'Astronomy':
 						astronomy = i
-					if data == 'Muggle Studies':
-						muggle_studies = i
+					if data == 'Defense Against the Dark Arts':
+						darkart = i
 				continue
 			data = line[:-1].split(',')
-			if data[index] == '':
-				feature['Index'].append('NaN')
-			else:
-				feature['Index'].append(float(data[index]))
 			if data[astronomy] == '':
 				feature['Astronomy'].append('NaN')
 			else:
 				feature['Astronomy'].append(float(data[astronomy]))
-			if data[muggle_studies] == '':
-				feature['Muggle Studies'].append('NaN')
+			if data[darkart] == '':
+				feature['Defense Against the Dark Arts'].append('NaN')
 			else:
-				feature['Muggle Studies'].append(float(data[muggle_studies]))
+				feature['Defense Against the Dark Arts'].append(float(data[darkart]))
 	return feature
 
 def draw_graph(feature):
 	plt.figure(figsize=(18, 10))
-	plt.scatter(feature['Index'], feature['Astronomy'],
-				label='Astronomy', s=10)
-	plt.scatter(feature['Index'], feature['Muggle Studies'],
-				label='Muggle Studies', s=10)
+	plt.scatter(feature['Astronomy'], feature['Defense Against the Dark Arts'], s=10)
 	plt.title('Similar features')
-	plt.xlabel('index')
-	plt.ylabel('feature')
-	plt.legend(loc='upper right')
+	plt.xlabel('Astronomy')
+	plt.ylabel('Defense Against the Dark Arts')
 	plt.show()
 
 def main(argv):
