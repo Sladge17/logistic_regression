@@ -50,7 +50,7 @@ def draw_graph(feature):
 	plt.show()
 
 def main(argv):
-	path = 'datasets/dataset_train.csv'
+	path = check_argv(argv)
 	feature = fill_data(path)
 	draw_graph(feature)
 
