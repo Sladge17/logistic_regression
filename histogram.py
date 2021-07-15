@@ -14,30 +14,40 @@ def fill_data(path):
 		for line in file:
 			if not title:
 				title = line[:-1].split(',')
+				target = {}
 				for i, data in enumerate(title):
 					if data == 'Hogwarts House':
 						house = i
-					if data == 'Care of Magical Creatures':
-						target = i
+					if data == 'Arithmancy' or\
+						data == 'Potions' or\
+						data == 'Care of Magical Creatures':
+						target[data] = i
 				continue
 			data = line[:-1].split(',')
-			if data[target] == '':
-				continue
-			try:
-				score[data[house]].append(float(data[target]))
-			except KeyError:
-				score[data[house]] = [float(data[target])]
+			for j in target:
+				if data[target[j]] == '':
+					continue
+				try:
+					score[j][data[house]].append(float(data[target[j]]))
+				except:
+					try:
+						score[j][data[house]] = [float(data[target[j]])]
+					except:
+						score[j] = {data[house]:[float(data[target[j]])]}
 	return score
 
 def draw_graph(score):
-	plt.figure(figsize=(18, 10))
 	bins = 20
-	for i in score:
-		plt.hist(score[i], alpha=0.5, label=i, bins=bins)
-	plt.title('Care of Magical Creatures')
-	plt.xlabel('score')
-	plt.ylabel('amount')
-	plt.legend(loc='upper right')
+	fig, axis = plt.subplots(len(score) // 2 + int(bool(len(score) % 2)), 2,
+								figsize=(18, 10))
+	ind = 0
+	for j in score:
+		for i in score[j]:
+			axis[ind // 2, ind % 2].\
+				hist(score[j][i], alpha=0.5, label=i, bins=bins)
+		axis[ind // 2, ind % 2].set(title=j, xlabel='score', ylabel='amount')
+		axis[ind // 2, ind % 2].legend(loc="upper right")
+		ind += 1
 	plt.show()
 
 def main(argv):
