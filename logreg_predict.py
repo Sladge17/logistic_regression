@@ -77,110 +77,92 @@ def fill_dump(dump):
 			weight.append(float(string))
 	return x_minmax, weight
 
+def get_indexcolumn(reader):
+	target = ['Ravenclaw', 'Slytherin', 'Gryffindor',
+			'Ravenclaw', 'Slytherin', 'Gryffindor']
+	index = [0] * (len(target) * 2)
+	title = reader.readline()[:-1].split(',')
+	for i in range(len(title)):
+		if title[i] == 'Muggle Studies':
+			index[0] = i
+		if title[i] == 'Charms':
+			index[1] = i
+		if title[i] == 'Divination':
+			index[2] = i
+		if title[i] == 'Flying':
+			index[3] = i
+		if title[i] == 'History of Magic':
+			index[4] = i
+		if title[i] == 'Transfiguration':
+			index[5] = i
+		if title[i] == 'Charms':
+			index[6] = i
+		if title[i] == 'Care of Magical Creatures':
+			index[7] = i
+		if title[i] == 'Divination':
+			index[8] = i
+		if title[i] == 'Care of Magical Creatures':
+			index[9] = i
+		if title[i] == 'Herbology':
+			index[10] = i
+		if title[i] == 'Flying':
+			index[11] = i
+	return target, index
+
+def clear_string(string, index):
+	string = string[:-1].split(',')
+	string = list(map(lambda x: string[x], index))
+	return string
+
+def norm_string(string, x_minmax):
+	for j in range(len(string)):
+		if string[j] == '':
+			continue
+		string[j] = normalization(float(string[j]), *x_minmax[j])
+	return string
+
 def normalization(target, val_min, val_max):
 	return (target - val_min) / (val_max - val_min)
 
+def fill_probability(probability, string, weight):
+	for i in range(len(probability)):
+		try:
+			probability[i] = sigmoid(string[i * 2] * weight[i * 3] +\
+									string[i * 2 + 1] * weight[i * 3 + 1] +\
+									1 * weight[i * 3 + 2])
+		except TypeError:
+			# probability[i] = None
+			probability[i] = 0
+
 def sigmoid(predict):
-	# sigmoid = 1 / (1 + np.exp(-predict))
 	sigmoid = 1 / (1 + 2.718 ** -predict)
 	return sigmoid
+
+def get_house(probability, target):
+	if max(probability) > 0.5:
+		for i in range(len(probability)):
+			if probability[i] == max(probability):
+				house = target[i]
+				break
+	else:
+		house = 'Hufflepuff'
+	return house
 
 
 def main(argv):
 	x_minmax, weight = fill_dump(argv[1])
-	
+	reader = open(argv[0])
+	target, index = get_indexcolumn(reader)
 	writer = open("houses.csv", 'w')
 	writer.write("Index,Hogwarts House\n")
-	count = 0
-	
-	target = ['Ravenclaw', 'Slytherin', 'Gryffindor',
-			'Ravenclaw', 'Slytherin', 'Gryffindor']
 	probability = [0] * len(target)
-	
-	index = [0] * (len(target) * 2)
-	with open(argv[0]) as reader:
-		title = 0
-		for string in reader:
-			if not title:
-				title = string[:-1].split(',')
-				for i in range(len(title)):
-					if title[i] == 'Muggle Studies':
-						index[0] = i
-					if title[i] == 'Charms':
-						index[1] = i
-					if title[i] == 'Divination':
-						index[2] = i
-					if title[i] == 'Flying':
-						index[3] = i
-					if title[i] == 'History of Magic':
-						index[4] = i
-					if title[i] == 'Transfiguration':
-						index[5] = i
-					if title[i] == 'Charms':
-						index[6] = i
-					if title[i] == 'Care of Magical Creatures':
-						index[7] = i
-					if title[i] == 'Divination':
-						index[8] = i
-					if title[i] == 'Care of Magical Creatures':
-						index[9] = i
-					if title[i] == 'Herbology':
-						index[10] = i
-					if title[i] == 'Flying':
-						index[11] = i
-				continue
-			string = string[:-1].split(',')
-			string = list(map(lambda x: string[x], index))
-
-			for j in range(len(string)):
-				if string[j] == '':
-					continue
-				string[j] = normalization(float(string[j]), *x_minmax[j])
-
-			for i in range(len(probability)):
-				try:
-					probability[i] = sigmoid(string[i * 2] * weight[i * 3] +\
-											string[i * 2 + 1] * weight[i * 3 + 1] +\
-											1 * weight[i * 3 + 2])
-				except TypeError:
-					# probability[i] = None
-					probability[i] = 0
-
-
-			# prob_max = max(probability)
-			
-			if max(probability) > 0.5:
-				for i in range(len(probability)):
-					if probability[i] == max(probability):
-						house = target[i]
-						break
-			else:
-				house = 'Hufflepuff'
-
-
-    # if np.max(probability) > 0.5:
-    #     # print(probability)
-    #     house = target[np.where(probability == np.max(probability))[0][0]]
-    # else:
-    #     if np.all([i < 0.5 for i in probability]):
-    #         house = 'Hufflepuff'
-    #         # print(probability)
-    #     else:
-    #         # print(probability)
-    #         house = 'nan'
-			
-			# writer.write(f"{count},{string}\n")
-			writer.write(f"{count},{house}\n")
-			count += 1
-
+	for i, string in enumerate(reader):
+		string = norm_string(clear_string(string, index), x_minmax)
+		fill_probability(probability, string, weight)
+		house = get_house(probability, target)
+		writer.write(f"{i},{house}\n")
+	reader.close()
 	writer.close()
-
-
-			# exit()
-
-
-
-
 
 if __name__ == "__main__":
 	main(sys.argv[1:])
