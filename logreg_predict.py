@@ -26,7 +26,7 @@ def fill_dump(dump='dump', custom=0):
 				print("\033[31mDumpfile not exist\033[37m")
 				exit()
 			try:
-				os.system("python logreg_train.py")
+				os.system("python logreg_train.py datasets/dataset_train.csv")
 			except:
 				print("\033[31mNot exist file logreg_train.py\033[37m")
 				exit()

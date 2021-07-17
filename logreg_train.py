@@ -1,14 +1,23 @@
 import sys
 import numpy as np
+import matplotlib.pyplot as plt
 
 def check_argv(argv):
 	argv_len = len(argv)
 	if not argv_len:
-		return 'datasets/dataset_train.csv'
-	if argv_len != 1:
-		print("\033[31mNeed only one dataset\033[37m")
+		print("\033[31mNeed input train dataset\033[37m")
 		exit()
-	return argv[0]
+	if argv_len > 2:
+		print("\033[31mToo many arguments\033[37m")
+		exit()
+	if (argv_len == 2 and argv[1] != '-g') and\
+		(argv_len == 2 and argv[1] != '-graph'):
+		print("\033[31mUnknown key\033[37m")
+		exit()
+	graph = 0
+	if argv_len == 2:
+		graph = 1
+	return argv[0], graph
 
 def read_data(source):
 	try:
@@ -65,7 +74,7 @@ def learning_nn(x, y, target, epochs, alpha, batch, eborder):
 	y_bin = get_bintarget(x, y, target)
 	cursor = 0
 	for epoch in range(epochs):
-		set_errorepoch(error, epoch, x, weight, y_bin, target)        
+		set_errorepoch(error, epoch, x, weight, y_bin, target)
 		if np.all([i < eborder for i in error[epoch]]):
 			return weight
 		for i in range(x.shape[0]):
@@ -143,10 +152,30 @@ def create_dumpfile(x_minmax, weight):
 		for w in weight:
 			file.write(f"{w}\n")
 
+def draw_graph(target, x_origin, x_minmax, weight):
+	fig, axis = plt.subplots(target.size // 2 + int(bool(target.size % 2)), 2,
+								figsize=(18, 10))
+	for i in range(target.size):
+		axis[i // 2, i % 2].scatter(x_origin[:, (i * 2)],
+									x_origin[:, (i * 2 + 1)])
+		divider_x0 = x_minmax[i * 2]
+		divider_x1 = -(normalization(x_minmax[i * 2],
+									*x_minmax[i * 2]) *\
+						weight[i * 3] + weight[i * 3 + 2]) /\
+					weight[i * 3 + 1]
+		divider_x1 = divider_x1 *\
+					(x_minmax[i * 2 + 1][1] - x_minmax[i * 2 + 1][0]) +\
+					x_minmax[i * 2 + 1][0]
+		axis[i // 2, i % 2].plot(divider_x0, divider_x1, color='red')
+		axis[i // 2, i % 2].set(title=target[i])
+	plt.show()
+
 def main(argv):
-	source = check_argv(argv)
+	source, graph = check_argv(argv)
 	print('reading data...')
 	target, x, y = read_data(source)
+	if graph:
+		x_origin = x.copy()
 	print('learning nn...')
 	x_minmax, x = prepare_features(x)
 	epochs = 300
@@ -157,6 +186,8 @@ def main(argv):
 						alpha, batch, eborder)
 	create_dumpfile(x_minmax, weight)
 	print('\033[32mCreated dumpfile\033[37m')
+	if graph:
+		draw_graph(target, x_origin, x_minmax, weight)
 
 if __name__ == "__main__":
 	main(sys.argv[1:])
