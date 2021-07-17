@@ -153,11 +153,18 @@ def create_dumpfile(x_minmax, weight):
 			file.write(f"{w}\n")
 
 def draw_graph(target, x_origin, x_minmax, weight):
+	name = ['Muggle Studies', 'Charms', 'Divination', 'Flying',
+			'History of Magic', 'Transfiguration', 'Charms',
+			'Care of Magical Creatures', 'Divination',
+			'Care of Magical Creatures', 'Herbology', 'Flying']
+	label = "x: {}\ny: {}"
 	fig, axis = plt.subplots(target.size // 2 + int(bool(target.size % 2)), 2,
 								figsize=(18, 10))
 	for i in range(target.size):
 		axis[i // 2, i % 2].scatter(x_origin[:, (i * 2)],
-									x_origin[:, (i * 2 + 1)])
+									x_origin[:, (i * 2 + 1)],
+									label=label.format(name[i * 2],
+														name[i * 2 + 1]))
 		divider_x0 = x_minmax[i * 2]
 		divider_x1 = -(normalization(x_minmax[i * 2],
 									*x_minmax[i * 2]) *\
@@ -168,6 +175,7 @@ def draw_graph(target, x_origin, x_minmax, weight):
 					x_minmax[i * 2 + 1][0]
 		axis[i // 2, i % 2].plot(divider_x0, divider_x1, color='red')
 		axis[i // 2, i % 2].set(title=target[i])
+		axis[i // 2, i % 2].legend(loc="upper right")
 	plt.show()
 
 def main(argv):
