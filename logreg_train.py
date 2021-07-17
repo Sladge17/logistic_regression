@@ -4,7 +4,7 @@ import numpy as np
 def check_argv(argv):
 	argv_len = len(argv)
 	if not argv_len:
-		return 'data.csv'
+		return 'datasets/dataset_train.csv'
 	if argv_len != 1:
 		print("\033[31mNeed only one dataset\033[37m")
 		exit()
@@ -156,7 +156,7 @@ def main(argv):
 	weight = learning_nn(x, y, target, epochs,
 						alpha, batch, eborder)
 	create_dumpfile(x_minmax, weight)
-	print('created dump file')
+	print('\033[32mCreated dumpfile\033[37m')
 
 if __name__ == "__main__":
 	main(sys.argv[1:])
