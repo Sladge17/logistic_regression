@@ -10,9 +10,13 @@ def check_argv(argv):
 	return argv[1]
 
 def fill_data(path):
-	feature = pd.read_csv(path)
-	feature = feature.drop(['Index', 'First Name', 'Last Name',
-							'Birthday', 'Best Hand'], axis=1)
+	try:
+		feature = pd.read_csv(path)
+		feature = feature.drop(['Index', 'First Name', 'Last Name',
+								'Birthday', 'Best Hand'], axis=1)
+	except FileNotFoundError:
+		print("\033[31mDataset not exist\033[37m")
+		exit()
 	return feature
 
 def draw_graph(feature):

@@ -10,30 +10,34 @@ def check_argv(argv):
 def fill_data(path):
 	title = 0
 	score = {}
-	with open(path) as file:
-		for line in file:
-			if not title:
-				title = line[:-1].split(',')
-				target = {}
-				for i, data in enumerate(title):
-					if data == 'Hogwarts House':
-						house = i
-					if data == 'Arithmancy' or\
-						data == 'Potions' or\
-						data == 'Care of Magical Creatures':
-						target[data] = i
-				continue
-			data = line[:-1].split(',')
-			for j in target:
-				if data[target[j]] == '':
+	try:
+		with open(path) as file:
+			for line in file:
+				if not title:
+					title = line[:-1].split(',')
+					target = {}
+					for i, data in enumerate(title):
+						if data == 'Hogwarts House':
+							house = i
+						if data == 'Arithmancy' or\
+							data == 'Potions' or\
+							data == 'Care of Magical Creatures':
+							target[data] = i
 					continue
-				try:
-					score[j][data[house]].append(float(data[target[j]]))
-				except:
+				data = line[:-1].split(',')
+				for j in target:
+					if data[target[j]] == '':
+						continue
 					try:
-						score[j][data[house]] = [float(data[target[j]])]
+						score[j][data[house]].append(float(data[target[j]]))
 					except:
-						score[j] = {data[house]:[float(data[target[j]])]}
+						try:
+							score[j][data[house]] = [float(data[target[j]])]
+						except:
+							score[j] = {data[house]:[float(data[target[j]])]}
+	except FileNotFoundError:
+		print("\033[31mDataset not exist\033[37m")
+		exit()
 	return score
 
 def draw_graph(score):
