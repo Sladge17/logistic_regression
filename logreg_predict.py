@@ -4,7 +4,7 @@ import os
 def check_argv(argv):
 	length = len(argv)
 	if not length or length > 2:
-		print("\033[31mIncorrect input\033[37m")
+		print("\033[31mNeed maximum two params\033[37m")
 		exit()
 	return length
 
@@ -31,6 +31,14 @@ def fill_dump(dump='dump', custom=0):
 				print("\033[31mNot exist file logreg_train.py\033[37m")
 				exit()
 	return x_minmax, weight
+
+def get_reader(path):
+	try:
+		reader = open(path)
+	except FileNotFoundError:
+		print("\033[31mDataset not exist\033[37m")
+		exit()
+	return reader
 
 def get_indexcolumn(reader):
 	target = ['Ravenclaw', 'Slytherin', 'Gryffindor',
@@ -107,7 +115,7 @@ def main(argv):
 		x_minmax, weight = fill_dump()
 	else:
 		x_minmax, weight = fill_dump(argv[1], 1)
-	reader = open(argv[0])
+	reader = get_reader(argv[0])
 	target, index = get_indexcolumn(reader)
 	writer = open("houses.csv", 'w')
 	writer.write("Index,Hogwarts House\n")
